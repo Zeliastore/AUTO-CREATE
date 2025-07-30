@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threads Account Creator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+        }
+        .account-card {
+            transition: all 0.3s ease;
+        }
+        .account-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        #successModal {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fab fa-threads text-3xl"></i>
+                    <h1 class="text-2xl font-bold">Threads Account Creator</h1>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#" class="hover:text-gray-200 transition">Home</a>
+                    <a href="#" class="hover:text-gray-200 transition">Features</a>
+                    <a href="#" class="hover:text-gray-200 transition">Pricing</a>
+                    <a href="#" class="hover:text-gray-200 transition">Contact</a>
+                </nav>
+                <button class="md:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Hero Section -->
+        <section class="mb-16">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-8 md:mb-0">
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Create Multiple Threads Accounts Automatically</h2>
+                    <p class="text-gray-600 mb-6 text-lg">Our advanced system allows you to generate unlimited Threads accounts with just one click. Perfect for marketers, influencers, and businesses.</p>
+                    <div class="flex space-x-4">
+                        <button id="startCreating" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition shadow-lg">
+                            Start Creating Accounts
+                        </button>
+                        <button class="border border-gray-300 hover:bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium transition">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+                <div class="md:w-1/2">
+                    <img src="https://via.placeholder.com/600x400" alt="Threads App" class="rounded-xl shadow-2xl w-full">
+                </div>
+            </div>
+        </section>
+
+        <!-- Account Creation Form -->
+        <section class="bg-white rounded-xl shadow-lg p-6 mb-12">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-6">Account Creation Settings</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <label class="block text-gray-700 mb-2">Number of Accounts</label>
+                    <input type="number" id="accountCount" min="1" max="100" value="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Username Prefix</label>
+                    <input type="text" id="usernamePrefix" placeholder="user_" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 mb-2">Email Domain</label>
+                    <select id="emailDomain" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="@akunlama.com">@akunlama.com</option>
+                        <option value="@akunlama.net">@akunlama.net</option>
+                        <option value="@akunlama.org">@akunlama.org</option>
+                        <option value="custom">Custom Domain</option>
+                    </select>
+                </div>
+                
+                <div id="customDomainContainer" class="hidden">
+                    <label class="block text-gray-700 mb-2">Custom Domain</label>
+                    <input type="text" id="customDomain" placeholder="@yourdomain.com" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <label class="flex items-center space-x-3">
+                    <input type="checkbox" id="useProxy" class="form-checkbox h-5 w-5 text-indigo-600 rounded">
+                    <span class="text-gray-700">Use Proxy for account creation</span>
+                </label>
+            </div>
+            
+            <div id="proxySettings" class="hidden bg-gray-50 p-4 rounded-lg mb-6">
+                <h4 class="text-lg font-medium text-gray-800 mb-3">Proxy Settings</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-gray-700 mb-2">Proxy Type</label>
+                        <select class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                            <option>HTTP</option>
+                            <option>HTTPS</option>
+                            <option>SOCKS4</option>
+                            <option>SOCKS5</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">IP Address</label>
+                        <input type="text" placeholder="192.168.1.1" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 mb-2">Port</label>
+                        <input type="number" placeholder="8080" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                    </div>
+                </div>
+            </div>
+            
+            <button id="generateAccounts" class="gradient-bg hover:opacity-90 text-white px-8 py-3 rounded-lg font-medium transition shadow-lg w-full md:w-auto">
+                Generate Accounts Now
+            </button>
+        </section>
+
+        <!-- Progress Section -->
+        <section id="progressSection" class="hidden bg-white rounded-xl shadow-lg p-6 mb-12">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Account Creation Progress</h3>
+            
+            <div class="mb-6">
+                <div class="flex justify-between mb-2">
+                    <span class="text-gray-700">Creating accounts...</span>
+                    <span id="progressPercentage" class="text-indigo-600 font-medium">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="progressBar" class="progress-bar bg-indigo-600 h-2.5 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div id="accountList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Accounts will be added here dynamically -->
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Why Choose Our Threads Creator</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-md account-card">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-bolt text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">Lightning Fast</h3>
+                    <p class="text-gray-600">Create up to 100 Threads accounts in under 5 minutes with our optimized system.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md account-card">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-shield-alt text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">Secure & Private</h3>
+                    <p class="text-gray-600">All accounts are created with unique fingerprints and secure proxies to avoid detection.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md account-card">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-headset text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2 text-gray-800">24/7 Support</h3>
+                    <p class="text-gray-600">Our dedicated support team is available round the clock to assist you with any issues.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal-enter">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+            <div class="text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
+                    <i class="fas fa-check text-green-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">Account Creation Complete!</h3>
+                <p id="successMessage" class="text-gray-500 mb-6">5 Threads accounts have been successfully created.</p>
+                <div class="flex justify-center space-x-4">
+                    <button id="downloadAccounts" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition">
+                        Download Accounts
+                    </button>
+                    <button id="closeModal" class="border border-gray-300 hover:bg-gray-100 text-gray-700 px-6 py-2 rounded-lg font-medium transition">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Threads Creator</h3>
+                    <p class="text-gray-400">The most advanced Threads account generator on the market. Create unlimited accounts with ease.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Home</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Features</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Pricing</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Terms of Service</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Contact Us</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                            <span class="text-gray-400">support@threadscreator.com</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <i class="fas fa-phone text-gray-400"></i>
+                            <span class="text-gray-400">+1 (555) 123-4567</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 Threads Account Creator. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const emailDomain = document.getElementById('emailDomain');
+            const customDomainContainer = document.getElementById('customDomainContainer');
+            const useProxy = document.getElementById('useProxy');
+            const proxySettings = document.getElementById('proxySettings');
+            const generateAccounts = document.getElementById('generateAccounts');
+            const progressSection = document.getElementById('progressSection');
+            const accountList = document.getElementById('accountList');
+            const progressBar = document.getElementById('progressBar');
+            const progressPercentage = document.getElementById('progressPercentage');
+            const successModal = document.getElementById('successModal');
+            const closeModal = document.getElementById('closeModal');
+            const downloadAccounts = document.getElementById('downloadAccounts');
+            const startCreating = document.getElementById('startCreating');
+            
+            // Event Listeners
+            emailDomain.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customDomainContainer.classList.remove('hidden');
+                } else {
+                    customDomainContainer.classList.add('hidden');
+                }
+            });
+            
+            useProxy.addEventListener('change', function() {
+                if (this.checked) {
+                    proxySettings.classList.remove('hidden');
+                } else {
+                    proxySettings.classList.add('hidden');
+                }
+            });
+            
+            generateAccounts.addEventListener('click', startAccountCreation);
+            startCreating.addEventListener('click', function() {
+                document.querySelector('#accountCreationForm').scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+            
+            closeModal.addEventListener('click', function() {
+                successModal.classList.add('hidden');
+            });
+            
+            downloadAccounts.addEventListener('click', function() {
+                alert('Account details downloaded as CSV file!');
+                successModal.classList.add('hidden');
+            });
+            
+            // Functions
+            // List of common American female first names
+            const femaleNames = [
+                'Emma', 'Olivia', 'Ava', 'Isabella', 'Sophia', 'Charlotte', 'Mia', 'Amelia', 
+                'Harper', 'Evelyn', 'Abigail', 'Emily', 'Elizabeth', 'Mila', 'Ella', 'Avery',
+                'Sofia', 'Camila', 'Aria', 'Scarlett', 'Victoria', 'Madison', 'Luna', 'Grace',
+                'Chloe', 'Penelope', 'Layla', 'Riley', 'Zoey', 'Nora', 'Lily', 'Eleanor'
+            ];
+
+            // List of common American last names
+            const lastNames = [
+                'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis',
+                'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson',
+                'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Perez', 'Thompson',
+                'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson', 'Walker'
+            ];
+
+            function getRandomName() {
+                const firstName = femaleNames[Math.floor(Math.random() * femaleNames.length)];
+                const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+                return `${firstName}${lastName}`.toLowerCase();
+            }
+
+            function startAccountCreation() {
+                const accountCount = parseInt(document.getElementById('accountCount').value);
+                const usernamePrefix = document.getElementById('usernamePrefix').value || getRandomName();
+                let emailDomainValue = emailDomain.value;
+                
+                if (emailDomainValue === 'custom') {
+                    emailDomainValue = document.getElementById('customDomain').value || '@example.com';
+                }
+                
+                // Show progress section
+                progressSection.classList.remove('hidden');
+                accountList.innerHTML = '';
+                
+                // Scroll to progress section
+                progressSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Simulate account creation
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    if (progress > 100) progress = 100;
+                    
+                    progressBar.style.width = `${progress}%`;
+                    progressPercentage.textContent = `${progress}%`;
+                    
+                    // Add accounts as we progress
+                    if (progress % 20 === 0) {
+                        const accountsToAdd = Math.floor(accountCount * (progress/100)) - accountList.children.length;
+                        for (let i = 0; i < accountsToAdd; i++) {
+                            const accountNumber = accountList.children.length + 1;
+                            const username = `${usernamePrefix}${accountNumber}`;
+                            const email = `${username}${emailDomainValue}`;
+                            const password = 'BISMILLAH1234';
+                            
+                            const accountCard = document.createElement('div');
+                            accountCard.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200';
+                            accountCard.innerHTML = `
+                                <div class="flex items-center mb-3">
+                                    <div class="bg-indigo-100 p-2 rounded-full mr-3">
+                                        <i class="fas fa-user text-indigo-600"></i>
+                                    </div>
+                                    <h4 class="font-medium">${username}</h4>
+                                </div>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Email:</span>
+                                        <span class="font-medium">${email}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Password:</span>
+                                        <span class="font-medium">${password}</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Status:</span>
+                                        <span class="text-green-500 font-medium">Active</span>
+                                    </div>
+                                </div>
+                            `;
+                            accountList.appendChild(accountCard);
+                        }
+                    }
+                    
+                    if (progress === 100) {
+                        clearInterval(interval);
+                        setTimeout(() => {
+                            showSuccessModal(accountCount);
+                        }, 500);
+                    }
+                }, 200);
+            }
+            
+            function showSuccessModal(count) {
+                document.getElementById('successMessage').textContent = 
+                    `${count} Threads account${count > 1 ? 's' : ''} have been successfully created.`;
+                successModal.classList.remove('hidden');
+            }
+            
+            function generatePassword(length) {
+                const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+                let password = "";
+                for (let i = 0; i < length; i++) {
+                    const randomIndex = Math.floor(Math.random() * charset.length);
+                    password += charset[randomIndex];
+                }
+                return password;
+            }
+        });
+    </script>
+</body>
+</html>
